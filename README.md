@@ -22,19 +22,14 @@ cd ledger-service
 mvn clean package -DskipTests
 ```
 
-##  Locally (with Docker Compose)
-
-1. **Build the JAR:**
-   ```
-   mvn clean package -DskipTests
-   ```
-2. **Start services (Postgres + Ledger Service):**
-   
-   **Note:** This project uses a shared `docker-compose.yml` located in the base project root (not in this directory).
-   
-   From the base project root, run:
-   ```
-   docker-compose up --build
+### Start All Services (from project root)
+```sh
+docker-compose up --build
+```
+This will start:
+- `transfer-service` (on port 8080)
+- `ledger-service` (on port 8081)
+- Separate Postgres databases for each service
    ```
    This will:
    - Start a PostgreSQL instance (with schema/init.sql)
@@ -48,11 +43,6 @@ mvn clean package -DskipTests
 - Database config: see `db/init.sql` and Docker Compose file in the base project root
 - Ports: Ledger Service (8081), Postgres (see compose file)
 
-## Running Tests
-
-```
-mvn test
-```
 
 ## Static Code Analysis (Qodana)
 
@@ -68,11 +58,16 @@ docker run -it --rm -v $(pwd):/data/project -p 8082:8082 jetbrains/qodana-jvm
 - `POST /ledger/transfer` – Apply transfer
 - `GET /health` – Health check
 
-## Notes
+
+### Development Notes
+- The shared `docker-compose.yml` is at the project root and manages both services and their databases.
+- Each service has its own database and does not access the other's tables.
+- For local development, you can build and test each service independently with Maven.
 - No authentication required by default, but code is structured for easy future integration (see SOLUTION.md).
 - For troubleshooting, check logs in the Docker containers.
 - **Docker Compose is shared:** This service relies on the `docker-compose.yml` in the base project root. Make sure to run Docker Compose commands from the base directory, not from within `ledger-service`.
 
----
+### CI
+A minimal GitHub Actions workflow is provided in `.github/workflows/ci.yml` to build and test the service on push/PR.
 
-**For more details, see SOLUTION.md.**
+
