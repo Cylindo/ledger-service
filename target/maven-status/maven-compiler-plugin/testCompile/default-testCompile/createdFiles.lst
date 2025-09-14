@@ -1,5 +1,0 @@
-com\wallet\ledger\ApplicationTests.class
-com\wallet\ledger\controller\AccountControllerTest.class
-com\wallet\ledger\controller\LedgerTransferControllerTest.class
-com\wallet\ledger\service\AccountServiceFindTest.class
-com\wallet\ledger\service\AccountServiceTest.class
