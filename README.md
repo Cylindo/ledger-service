@@ -16,13 +16,13 @@ This project is a minimal FinTech-style payments system (Ledger Service) built w
 - Maven 3.8+
 - Docker & Docker Compose
 
-## Build & Test
-
+## Build the service
+```sh
+cd ledger-service
+mvn clean package -DskipTests
 ```
-mvn clean verify
-```
 
-## Run Locally (with Docker Compose)
+##  Locally (with Docker Compose)
 
 1. **Build the JAR:**
    ```
