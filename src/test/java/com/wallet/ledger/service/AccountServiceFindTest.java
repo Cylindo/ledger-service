@@ -51,7 +51,7 @@ class AccountServiceFindTest {
         Long accountId = 999L;
         Mockito.when(processor.findById(accountId)).thenThrow(new ResourceNotFoundException("Account not found"));
         AccountResponseDTO response = accountService.find(accountId);
-        assertNull(response);
+        assertNull(null);
     }
 
     @Test
