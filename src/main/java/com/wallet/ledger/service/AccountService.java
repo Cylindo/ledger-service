@@ -68,34 +68,32 @@ public class AccountService {
      */
     public AccountResponseDTO find(Long accountId) {
         log.info("Retrieving Account with ID: {}", accountId);
-        AccountDTO accountDTO = null;
-        AccountResponseDTO accountResponseDTO = null;
-        //validate input
         List<ValidationError> errors = new ArrayList<>();
         if (accountId == null) {
             errors.add(new ValidationError("accountId", "accountId cannot be null or empty.", null));
         }
-
-        // Throw validation Exception if there are any validation errors
         if (!errors.isEmpty()) {
             throw new ValidationException("Validation failed.", errors);
         }
-
         try {
             Account account = accountServiceProcessor.findById(accountId);
             if (account == null) {
-                return new AccountResponseDTO(false, "Account not found for ID: " + accountId, null);
+                return null; // not found
             }
-            accountDTO = DTOTransformer.toAccountDTO(account);
-            accountResponseDTO = DTOTransformer.toAccountResponseDTO(accountDTO);
+            AccountDTO accountDTO = DTOTransformer.toAccountDTO(account);
+            AccountResponseDTO accountResponseDTO = DTOTransformer.toAccountResponseDTO(accountDTO);
             accountResponseDTO.setSuccess(true);
             accountResponseDTO.setMessage("Account retrieved successfully.");
-
             return accountResponseDTO;
-        } catch (ValidationException | ResourceNotFoundException e) {
-            String msg = "Unexpected error occurred while retrieving the Call with ID: " + accountId + "." + "error: " + e.getMessage();
-            log.error(msg, e.getMessage(), e);
-            return new AccountResponseDTO(false,e.getMessage(),null);
+        } catch (ResourceNotFoundException e) {
+            // explicit not found path -> null
+            return null;
+        } catch (ValidationException e) {
+            throw e; // already a validation issue
+        } catch (Exception e) {
+            String msg = "Unexpected error occurred while retrieving the Account with ID: " + accountId + ". error: " + e.getMessage();
+            log.error(msg, e);
+            return new AccountResponseDTO(false, e.getMessage(), null);
         }
     }
 }

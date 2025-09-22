@@ -1,16 +1,18 @@
 package com.wallet.ledger.controller;
 
-
 import com.wallet.ledger.dto.AccountDTO;
 import com.wallet.ledger.dto.AccountResponseDTO;
 import com.wallet.ledger.service.AccountService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
 
@@ -21,15 +23,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@WebMvcTest(AccountController.class)
+@ExtendWith(MockitoExtension.class)
 class AccountControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private AccountService accountService;
+
+    @InjectMocks
+    private AccountController accountController;
+
+    @BeforeEach
+    void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(accountController).build();
+    }
 
     @Test
     void find_account_success() throws Exception {
@@ -50,10 +58,9 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.accountDTO.id").value(1))
                 .andExpect(jsonPath("$.accountDTO.balance").value(1000.00))
-                .andExpect(jsonPath("$.accountDTO.version").value(13L));
+                .andExpect(jsonPath("$.accountDTO.version").value(13));
     }
 
-    // Java
     @Test
     void create_account_success() throws Exception {
         AccountDTO accountDTO = new AccountDTO();
@@ -75,11 +82,9 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.accountDTO.id").value(2))
                 .andExpect(jsonPath("$.accountDTO.balance").value(500.00))
-                .andExpect(jsonPath("$.accountDTO.version").value(13L));
+                .andExpect(jsonPath("$.accountDTO.version").value(13));
     }
 
-
-    // Java
     @Test
     void create_account_failure() throws Exception {
         AccountResponseDTO response = new AccountResponseDTO();
@@ -94,5 +99,4 @@ class AccountControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false));
     }
-
 }

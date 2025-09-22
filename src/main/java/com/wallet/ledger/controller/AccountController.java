@@ -59,11 +59,15 @@ public class AccountController {
     public ResponseEntity<AccountResponseDTO> find(@PathVariable Long id) {
         try {
             AccountResponseDTO response = accountService.find(id);
-
+            if (response == null) {
+                AccountResponseDTO notFound = new AccountResponseDTO();
+                notFound.setSuccess(false);
+                notFound.setMessage("Account not found for ID: " + id);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFound);
+            }
             if (!response.isSuccess()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception ex) {
             AccountResponseDTO errorResponse = new AccountResponseDTO();
